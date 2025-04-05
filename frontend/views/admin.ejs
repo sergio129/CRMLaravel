@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link rel="stylesheet" href="/css/administracion.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido, <%= user.name %> (Administrador)</p>
+        </header>
+        <main>
+            <div class="admin-panel">
+                <h2>Gestión de Usuarios</h2>
+                <div class="admin-tools">
+                    <div class="admin-card">
+                        <h3>Usuarios</h3>
+                        <p>Administrar usuarios del sistema</p>
+                        <a href="#" class="btn">Gestionar</a>
+                    </div>
+                    <div class="admin-card">
+                        <h3>Roles</h3>
+                        <p>Configurar roles y permisos</p>
+                        <a href="#" class="btn">Gestionar</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <a href="/dashboard" class="btn">Volver al Dashboard</a>
+            <a href="/logout" class="btn btn-danger">Cerrar Sesión</a>
+        </footer>
+    </div>
+</body>
+</html>

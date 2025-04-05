@@ -314,6 +314,186 @@ function calculateDetailedLoan() {
     return false; // Prevenir envío del formulario
 }
 
+// Comparar dos préstamos y mostrar las diferencias
+function compareLoanOptions() {
+    // Obtener valores del préstamo A
+    const loanAmountA = parseFloat(document.getElementById('loan-a-amount').value);
+    const loanRateA = parseFloat(document.getElementById('loan-a-rate').value) / 100; // Convertir a decimal
+    const loanTermA = parseInt(document.getElementById('loan-a-term').value);
+    
+    // Obtener valores del préstamo B
+    const loanAmountB = parseFloat(document.getElementById('loan-b-amount').value);
+    const loanRateB = parseFloat(document.getElementById('loan-b-rate').value) / 100; // Convertir a decimal
+    const loanTermB = parseInt(document.getElementById('loan-b-term').value);
+    
+    // Calcular pagos mensuales
+    const paymentA = calculateMonthlyPayment(loanAmountA, loanRateA/12, loanTermA);
+    const paymentB = calculateMonthlyPayment(loanAmountB, loanRateB/12, loanTermB);
+    
+    // Calcular totales
+    const totalPaymentA = paymentA * loanTermA;
+    const totalPaymentB = paymentB * loanTermB;
+    
+    const totalInterestA = totalPaymentA - loanAmountA;
+    const totalInterestB = totalPaymentB - loanAmountB;
+    
+    // Calcular diferencias
+    const paymentDiff = paymentB - paymentA;
+    const interestDiff = totalInterestB - totalInterestA;
+    const totalDiff = totalPaymentB - totalPaymentA;
+    
+    // Mostrar resultados
+    document.getElementById('loan-a-payment').textContent = formatCurrency(paymentA);
+    document.getElementById('loan-b-payment').textContent = formatCurrency(paymentB);
+    document.getElementById('payment-diff').textContent = formatCurrency(Math.abs(paymentDiff)) + 
+        (paymentDiff >= 0 ? ' (B > A)' : ' (A > B)');
+    
+    document.getElementById('loan-a-interest').textContent = formatCurrency(totalInterestA);
+    document.getElementById('loan-b-interest').textContent = formatCurrency(totalInterestB);
+    document.getElementById('interest-diff').textContent = formatCurrency(Math.abs(interestDiff)) +
+        (interestDiff >= 0 ? ' (B > A)' : ' (A > B)');
+    
+    document.getElementById('loan-a-total').textContent = formatCurrency(totalPaymentA);
+    document.getElementById('loan-b-total').textContent = formatCurrency(totalPaymentB);
+    document.getElementById('total-diff').textContent = formatCurrency(Math.abs(totalDiff)) +
+        (totalDiff >= 0 ? ' (B > A)' : ' (A > B)');
+    
+    // Determinar y mostrar la mejor opción
+    const bestLoanElement = document.getElementById('best-loan');
+    if (bestLoanElement) {
+        let recommendationText = '';
+        
+        // Calcular costo total por unidad monetaria prestada
+        const costPerUnitA = totalPaymentA / loanAmountA;
+        const costPerUnitB = totalPaymentB / loanAmountB;
+        
+        if (costPerUnitA < costPerUnitB) {
+            recommendationText = '<strong>Préstamo A</strong> (menor costo total relativo)';
+        } else if (costPerUnitB < costPerUnitA) {
+            recommendationText = '<strong>Préstamo B</strong> (menor costo total relativo)';
+        } else {
+            recommendationText = 'Ambos préstamos tienen el mismo costo relativo';
+        }
+        
+        bestLoanElement.innerHTML = recommendationText;
+    }
+    
+    // Mostrar la sección de resultados
+    const comparisonResult = document.getElementById('comparison-result');
+    if (comparisonResult) {
+        comparisonResult.style.display = 'block';
+    }
+    
+    return false; // Prevenir envío del formulario
+}
+
+// Función auxiliar para calcular el pago mensual
+function calculateMonthlyPayment(principal, monthlyRate, term) {
+    if (monthlyRate === 0) {
+        return principal / term;
+    } else {
+        const x = Math.pow(1 + monthlyRate, term);
+        return (principal * x * monthlyRate) / (x - 1);
+    }
+}
+
+// Calcular score de crédito basado en los factores ingresados
+function calculateCreditScore() {
+    const paymentHistory = parseInt(document.getElementById('payment-history').value);
+    const creditUtilization = parseInt(document.getElementById('credit-utilization').value);
+    const creditHistory = parseInt(document.getElementById('credit-history').value);
+    const newCredit = parseInt(document.getElementById('new-credit').value);
+    
+    // Pesos de cada factor (porcentajes)
+    const weights = {
+        paymentHistory: 0.35,
+        creditUtilization: 0.30,
+        creditHistory: 0.15,
+        newCredit: 0.10,
+        creditMix: 0.10 // Valor predeterminado ya que no hay entrada para este
+    };
+    
+    // Calcular puntaje base (mínimo 300, máximo 850)
+    let baseScore = 300;
+    
+    // Añadir puntos por historial de pago (max 192.5 puntos)
+    baseScore += paymentHistory * weights.paymentHistory * 5.5;
+    
+    // Añadir puntos por utilización de crédito (inversamente proporcional, max 165 puntos)
+    // Menor utilización = mejor puntaje
+    baseScore += (100 - creditUtilization) * weights.creditUtilization * 5.5;
+    
+    // Añadir puntos por longitud de historial (max 82.5 puntos)
+    // Limitamos a máximo 15 años para el cálculo
+    const historyYears = Math.min(creditHistory, 15);
+    baseScore += (historyYears / 15) * weights.creditHistory * 550;
+    
+    // Restar puntos por nuevas solicitudes (max resta de 55 puntos)
+    // Más solicitudes = peor puntaje
+    baseScore -= Math.min(newCredit, 10) * weights.newCredit * 5.5;
+    
+    // Añadir puntos por mezcla de crédito (valor predeterminado, max 55 puntos)
+    baseScore += 0.5 * weights.creditMix * 550;
+    
+    // Asegurar que el puntaje esté en el rango 300-850
+    let finalScore = Math.max(300, Math.min(850, Math.round(baseScore)));
+    
+    // Mostrar el puntaje en la interfaz
+    const scoreValueElement = document.getElementById('credit-score-value');
+    const ratingElement = document.getElementById('credit-rating');
+    
+    if (scoreValueElement) {
+        scoreValueElement.textContent = finalScore;
+        
+        // Actualizar el estilo según el puntaje
+        let colorClass = '';
+        let rating = '';
+        
+        if (finalScore >= 750) {
+            colorClass = 'excellent';
+            rating = 'Excelente';
+        } else if (finalScore >= 700) {
+            colorClass = 'very-good';
+            rating = 'Muy Bueno';
+        } else if (finalScore >= 650) {
+            colorClass = 'good';
+            rating = 'Bueno';
+        } else if (finalScore >= 600) {
+            colorClass = 'fair';
+            rating = 'Regular';
+        } else {
+            colorClass = 'poor';
+            rating = 'Malo';
+        }
+        
+        // Eliminar todas las clases anteriores
+        scoreValueElement.className = 'score-value ' + colorClass;
+        
+        if (ratingElement) {
+            ratingElement.textContent = rating;
+            ratingElement.className = 'score-rating ' + colorClass;
+        }
+    }
+    
+    // Mostrar el resultado
+    const resultElement = document.getElementById('score-result');
+    if (resultElement) {
+        resultElement.style.display = 'block';
+    }
+    
+    return false; // Prevenir envío del formulario
+}
+
+// Actualizar valor del rango mientras se desliza
+function updateRangeValue(inputId, valueId) {
+    const input = document.getElementById(inputId);
+    const valueSpan = document.getElementById(valueId);
+    
+    if (input && valueSpan) {
+        valueSpan.textContent = input.value;
+    }
+}
+
 // Cuando el DOM esté cargado, inicializar los eventos
 document.addEventListener('DOMContentLoaded', function() {
     // Reemplazar el evento del formulario de préstamo
@@ -354,6 +534,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.amortizationTableData.totalInterest,
                 window.amortizationTableData.term
             );
+        });
+    }
+    
+    // Inicializar el cálculo de score de crédito
+    const creditScoreForm = document.getElementById('credit-score-calculator');
+    if (creditScoreForm) {
+        creditScoreForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateCreditScore();
+        });
+    }
+    
+    // Manejar eventos de deslizadores para mostrar el valor
+    const paymentHistorySlider = document.getElementById('payment-history');
+    const utilizationSlider = document.getElementById('credit-utilization');
+    
+    if (paymentHistorySlider) {
+        paymentHistorySlider.addEventListener('input', function() {
+            updateRangeValue('payment-history', 'payment-history-value');
+        });
+    }
+    
+    if (utilizationSlider) {
+        utilizationSlider.addEventListener('input', function() {
+            updateRangeValue('credit-utilization', 'credit-utilization-value');
+        });
+    }
+    
+    // Manejar el formulario de comparación de préstamos
+    const loanComparisonForm = document.getElementById('loan-comparison');
+    if (loanComparisonForm) {
+        loanComparisonForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            compareLoanOptions();
         });
     }
 });

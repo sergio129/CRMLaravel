@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Denegado</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Acceso Denegado</h1>
+        </header>
+        <main>
+            <div class="error-container">
+                <h2>No tienes permisos para acceder a esta página</h2>
+                <p>Tu rol actual (<%= user.role %>) no tiene los permisos necesarios para acceder al recurso solicitado.</p>
+            </div>
+        </main>
+        <footer>
+            <a href="/dashboard" class="btn">Volver al Dashboard</a>
+        </footer>
+    </div>
+</body>
+</html>
