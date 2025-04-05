@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestión</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="welcome-box">
+      <h1>Bienvenido al Sistema</h1>
+      <p class="welcome-message">Plataforma de gestión y administración</p>
+      
+      <div class="options-container">
+        <button id="acceso-btn" class="access-button">Acceder al Sistema</button>
+      </div>
+      
+      <div id="access-form" class="access-form" style="display: none;">
+        <form id="accessCodeForm">
+          <div class="form-group">
+            <label for="accessCode">Código de Acceso</label>
+            <input type="password" id="accessCode" required>
+          </div>
+          <button type="submit" class="access-button-small">Verificar</button>
+        </form>
+      </div>
+      
+      <div class="system-info">
+        <p class="version">Versión: 1.0.0</p>
+        <p>© 2023 Sistema de Gestión Sergio-Octavio</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Código de acceso encriptado en el cliente (NO es seguro, solo demostrativo)
+    const accessCodeHash = '5f4dcc3b5aa765d61d8327deb882cf99'; // 'password' en MD5
+    
+    document.getElementById('acceso-btn').addEventListener('click', function() {
+      document.getElementById('access-form').style.display = 'block';
+      this.style.display = 'none';
+    });
+    
+    document.getElementById('accessCodeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const accessCode = document.getElementById('accessCode').value;
+      
+      // Esta validación debería realizarse en el servidor para mayor seguridad
+      if (md5(accessCode) === accessCodeHash) {
+        window.location.href = '/admin-login';
+      } else {
+        alert('Código de acceso incorrecto');
+      }
+    });
+    
+    // Función MD5 simple (NO usar en producción - solo para demostración)
+    function md5(input) {
+      // En un entorno real, esta función debería implementar MD5 correctamente
+      // Aquí solo verificamos si la contraseña es "password" para la demostración
+      if (input === 'password') {
+        return '5f4dcc3b5aa765d61d8327deb882cf99';
+      }
+      return '';
+    }
+  </script>
+</body>
+</html>

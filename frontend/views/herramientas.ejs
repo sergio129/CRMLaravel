@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herramientas de Crédito</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/credito-style.css">
+  <script src="/js/credito-tools.js" defer></script>
+</head>
+<body class="dashboard-body">
+  <header class="dashboard-header">
+    <div class="logo">Sistema de Gestión</div>
+    <div class="user-menu">
+      <span class="user-greeting">Bienvenido, <%= user.name %></span>
+      <a href="/logout" class="logout-link">Cerrar Sesión</a>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    <nav class="sidebar">
+      <ul class="menu">
+        <li class="menu-item"><a href="/dashboard"><i class="icon icon-home"></i> Inicio</a></li>
+        <li class="menu-item active"><a href="/herramientas"><i class="icon icon-tools"></i> Herramientas de Crédito</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-users"></i> Usuarios</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-reports"></i> Reportes</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-settings"></i> Configuración</a></li>
+      </ul>
+    </nav>
+    
+    <main class="content">
+      <div class="page-header">
+        <h1>Herramientas de Crédito</h1>
+        <p class="breadcrumbs">Inicio / Herramientas de Crédito</p>
+      </div>
+      
+      <div class="tools-container">
+        <!-- Calculadora de Préstamos -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <h3>Calculadora de Préstamos</h3>
+          </div>
+          <div class="tool-content">
+            <form id="loan-calculator" class="tool-form">
+              <div class="form-group" data-unit="$">
+                <label for="loan-amount">Monto del préstamo ($)</label>
+                <input type="number" id="loan-amount" min="0" step="1000" value="10000" required>
+              </div>
+              <div class="form-group" data-unit="%">
+                <label for="interest-rate">Tasa de interés mensual (%)</label>
+                <input type="text" id="interest-rate" class="decimal-input" min="0" max="20" step="0.01" value="1,69" required>
+                <span class="rate-equivalence" id="rate-equivalence"></span>
+              </div>
+              <div class="form-group">
+                <label for="loan-term">Plazo (meses)</label>
+                <input type="number" id="loan-term" min="1" max="360" value="12" required>
+              </div>
+              <button type="submit" class="tool-button">Calcular</button>
+            </form>
+            
+            <div class="tool-result" id="loan-result">
+              <div class="result-item">
+                <span class="result-label">Pago mensual:</span>
+                <div>
+                  <span class="result-value" id="monthly-payment">$0</span>
+                  <span class="result-breakdown" id="monthly-payment-detail"></span>
+                </div>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Total a pagar:</span>
+                <div>
+                  <span class="result-value" id="total-payment">$0</span>
+                  <span class="result-breakdown" id="total-payment-detail"></span>
+                </div>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Total intereses:</span>
+                <div>
+                  <span class="result-value" id="total-interest">$0</span>
+                  <span class="result-breakdown" id="total-interest-detail"></span>
+                </div>
+              </div>
+              
+              <!-- Tabla de amortización mejorada -->
+              <div class="amortization-section">
+                <h4 class="amortization-title">Tabla de Amortización</h4>
+                <div class="table-container">
+                  <table class="amortization-table" id="amortization-table">
+                    <!-- Se llenará mediante JavaScript -->
+                  </table>
+                </div>
+                <!-- El botón de ver detalles se añadirá aquí mediante JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Calculadora de Score Crediticio -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <h3>Simulador de Score Crediticio</h3>
+          </div>
+          <div class="tool-content">
+            <form id="credit-score-calculator" class="tool-form">
+              <div class="form-group">
+                <label for="payment-history">Historial de pago (0-100)</label>
+                <input type="range" id="payment-history" min="0" max="100" value="70" class="slider">
+                <span class="range-value" id="payment-history-value">70</span>
+              </div>
+              <div class="form-group">
+                <label for="credit-utilization">Uso de crédito (0-100)</label>
+                <input type="range" id="credit-utilization" min="0" max="100" value="50" class="slider">
+                <span class="range-value" id="credit-utilization-value">50</span>
+              </div>
+              <div class="form-group">
+                <label for="credit-history">Longitud historial (años)</label>
+                <input type="number" id="credit-history" min="0" max="50" value="5" required>
+              </div>
+              <div class="form-group">
+                <label for="new-credit">Nuevas solicitudes (últimos 2 años)</label>
+                <input type="number" id="new-credit" min="0" max="20" value="2" required>
+              </div>
+              <button type="submit" class="tool-button">Calcular Score</button>
+            </form>
+            
+            <div class="tool-result" id="score-result">
+              <div class="score-meter">
+                <div class="score-gauge">
+                  <div class="score-value" id="credit-score-value">650</div>
+                </div>
+                <div class="score-scale">
+                  <span>300</span>
+                  <span>850</span>
+                </div>
+              </div>
+              <div class="score-rating" id="credit-rating">Bueno</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Comparador de Préstamos -->
+        <div class="tool-card">
+          <div class="tool-header">
+            <h3>Comparador de Préstamos</h3>
+          </div>
+          <div class="tool-content">
+            <form id="loan-comparison" class="tool-form">
+              <div class="comparison-inputs">
+                <div class="comparison-column">
+                  <h4 class="comparison-title">Préstamo A</h4>
+                  <div class="form-group">
+                    <label for="loan-a-amount">Monto ($)</label>
+                    <input type="number" id="loan-a-amount" min="0" step="1000" value="10000" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="loan-a-rate">Tasa (%)</label>
+                    <input type="number" id="loan-a-rate" min="0" max="100" step="0.1" value="5" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="loan-a-term">Plazo (meses)</label>
+                    <input type="number" id="loan-a-term" min="1" max="360" value="12" required>
+                  </div>
+                </div>
+                
+                <div class="comparison-column">
+                  <h4 class="comparison-title">Préstamo B</h4>
+                  <div class="form-group">
+                    <label for="loan-b-amount">Monto ($)</label>
+                    <input type="number" id="loan-b-amount" min="0" step="1000" value="10000" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="loan-b-rate">Tasa (%)</label>
+                    <input type="number" id="loan-b-rate" min="0" max="100" step="0.1" value="7" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="loan-b-term">Plazo (meses)</label>
+                    <input type="number" id="loan-b-term" min="1" max="360" value="12" required>
+                  </div>
+                </div>
+              </div>
+              
+              <button type="submit" class="tool-button">Comparar</button>
+            </form>
+            
+            <div class="tool-result" id="comparison-result">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>Detalle</th>
+                    <th>Préstamo A</th>
+                    <th>Préstamo B</th>
+                    <th>Diferencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Pago mensual</td>
+                    <td id="loan-a-payment">$0</td>
+                    <td id="loan-b-payment">$0</td>
+                    <td id="payment-diff">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Total intereses</td>
+                    <td id="loan-a-interest">$0</td>
+                    <td id="loan-b-interest">$0</td>
+                    <td id="interest-diff">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Total a pagar</td>
+                    <td id="loan-a-total">$0</td>
+                    <td id="loan-b-total">$0</td>
+                    <td id="total-diff">$0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="comparison-recommendation" id="loan-recommendation">
+                La mejor opción es: <span id="best-loan">Calculando...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

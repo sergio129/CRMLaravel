@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+  <header class="dashboard-header">
+    <div class="logo">Sistema de Gestión</div>
+    <div class="user-menu">
+      <span class="user-greeting">Bienvenido, <%= user.name %></span>
+      <a href="/logout" class="logout-link">Cerrar Sesión</a>
+    </div>
+  </header>
+
+  <div class="dashboard-container">
+    <nav class="sidebar">
+      <ul class="menu">
+        <li class="menu-item active"><a href="/dashboard"><i class="icon icon-home"></i> Inicio</a></li>
+        <li class="menu-item"><a href="/herramientas"><i class="icon icon-tools"></i> Herramientas de Crédito</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-users"></i> Usuarios</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-reports"></i> Reportes</a></li>
+        <li class="menu-item"><a href="#"><i class="icon icon-settings"></i> Configuración</a></li>
+      </ul>
+    </nav>
+    
+    <main class="content">
+      <div class="page-header">
+        <h1>Panel de Control</h1>
+        <p class="breadcrumbs">Inicio / Panel</p>
+      </div>
+      
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-card-header">Usuarios Totales</div>
+          <div class="stat-card-value">125</div>
+          <div class="stat-card-footer">+12% este mes</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">Proyectos Activos</div>
+          <div class="stat-card-value">42</div>
+          <div class="stat-card-footer">5 nuevos esta semana</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">Completados</div>
+          <div class="stat-card-value">89%</div>
+          <div class="stat-card-footer">+7% desde el último reporte</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-card-header">Pendientes</div>
+          <div class="stat-card-value">18</div>
+          <div class="stat-card-footer">2 con alta prioridad</div>
+        </div>
+      </div>
+      
+      <div class="dashboard-widgets">
+        <div class="widget">
+          <div class="widget-header">
+            <h3>Actividad Reciente</h3>
+            <a href="#" class="widget-action">Ver todo</a>
+          </div>
+          <div class="widget-content">
+            <ul class="activity-list">
+              <li class="activity-item">
+                <span class="activity-time">Hace 10 min</span>
+                <span class="activity-text">Juan actualizó el reporte de ventas</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">Hace 2 horas</span>
+                <span class="activity-text">María agregó un nuevo usuario</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">Ayer</span>
+                <span class="activity-text">Carlos completó el proyecto "Dashboard"</span>
+              </li>
+              <li class="activity-item">
+                <span class="activity-time">Hace 2 días</span>
+                <span class="activity-text">Ana envió un reporte mensual</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="widget">
+          <div class="widget-header">
+            <h3>Información del Usuario</h3>
+          </div>
+          <div class="widget-content">
+            <div class="user-profile">
+              <div class="user-avatar">
+                <%= user.name.charAt(0).toUpperCase() %>
+              </div>
+              <div class="user-details">
+                <p><strong>Nombre:</strong> <%= user.name %></p>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <p><strong>ID:</strong> <%= user.id %></p>
+                <p><strong>Última sesión:</strong> Hoy, <%= new Date().toLocaleTimeString() %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
