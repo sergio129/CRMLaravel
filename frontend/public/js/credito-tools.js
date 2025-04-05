@@ -184,7 +184,7 @@ function showFullAmortizationTable(data, payment, totalPrincipal, totalInterest,
     container.id = 'full-amortization-container';
     container.className = 'full-amortization-container';
     
-    // Crear el contenido de la ventana modal
+    // Crear el contenido de la ventana modal con clases específicas para el ancho de columna
     container.innerHTML = `
         <div class="full-amortization-content">
             <div class="full-amortization-header">

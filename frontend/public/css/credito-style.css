@@ -319,25 +319,54 @@
 
 .amortization-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
+  table-layout: fixed; /* Ancho fijo para las columnas */
 }
 
-.amortization-table th, .amortization-table td {
-  padding: 8px;
+/* Definir el ancho específico para cada columna */
+.amortization-table thead th:nth-child(1), 
+.amortization-table tbody td:nth-child(1) {
+  width: 10%; /* Columna de número de cuota */
+}
+
+.amortization-table thead th:nth-child(2),
+.amortization-table thead th:nth-child(3),
+.amortization-table thead th:nth-child(4),
+.amortization-table thead th:nth-child(5),
+.amortization-table tbody td:nth-child(2),
+.amortization-table tbody td:nth-child(3),
+.amortization-table tbody td:nth-child(4),
+.amortization-table tbody td:nth-child(5) {
+  width: 22.5%; /* Columnas de valores monetarios */
+}
+
+.amortization-table thead th {
+  background-color: #f2f5fc;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 8px;
+  border-bottom: 2px solid #e0e6f5;
+  position: sticky;
+  top: 0;
+  white-space: nowrap; /* Evitar saltos de línea en encabezados */
+}
+
+.amortization-table tbody td {
+  padding: 10px 8px;
   text-align: right;
   border-bottom: 1px solid #eee;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Mostrar "..." si el contenido es muy largo */
+  white-space: nowrap; /* Evitar saltos de línea */
 }
 
-.amortization-table th {
-  background-color: #f5f7fb;
-  font-weight: 600;
-  color: #333;
-}
-
-.amortization-table td:first-child {
+.amortization-table tbody td:first-child {
   text-align: center;
+  font-weight: 500;
 }
 
 .amortization-table .total-row td {
@@ -465,8 +494,13 @@
 
 .full-amortization-body {
   padding: 20px;
+  overflow-x: auto; /* Permitir scroll horizontal en pantallas pequeñas */
   overflow-y: auto;
   max-height: calc(90vh - 60px);
+}
+
+.full-amortization-body .amortization-table {
+  min-width: 650px; /* Ancho mínimo para la tabla completa */
 }
 
 /* Estilos para la tabla detallada de amortización */
@@ -528,7 +562,8 @@
 
 .amortization-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
   table-layout: fixed; /* Hace que las columnas tengan ancho fijo */
 }
@@ -542,13 +577,17 @@
   border-bottom: 2px solid #e0e6f5;
   position: sticky;
   top: 0;
+  white-space: nowrap; /* Evitar saltos de línea en encabezados */
 }
 
 .amortization-table tbody td {
   padding: 10px 8px;
-  text-align: center; /* Centrar todos los valores */
+  text-align: right; /* Centrar todos los valores */
   border-bottom: 1px solid #eee;
   color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Mostrar "..." si el contenido es muy largo */
+  white-space: nowrap; /* Evitar saltos de línea */
 }
 
 /* Columnas específicas que deben estar alineadas a la derecha (valores monetarios) */
@@ -606,11 +645,16 @@
   }
   
   .amortization-table {
+    min-width: 600px; /* Asegurar que la tabla no se comprima demasiado */
     font-size: 12px;
   }
   
   .amortization-table th, .amortization-table td {
     padding: 6px 4px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
   }
 }
 
