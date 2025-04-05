@@ -55,6 +55,30 @@ function generateAmortizationTable(principal, rate, term, payment) {
     let totalInterest = 0;
     let totalPrincipal = 0;
     
+    // Guardamos los datos completos para usarlos en la vista detallada
+    let fullAmortizationData = [];
+    
+    // Calculamos todos los datos de amortización
+    for (let i = 1; i <= term; i++) {
+        const interest = balance * rate;
+        const principal_payment = payment - interest;
+        
+        totalInterest += interest;
+        totalPrincipal += principal_payment;
+        
+        balance -= principal_payment;
+        if (balance < 0.01) balance = 0; // Evitar residuos por redondeo
+        
+        // Guardamos los datos para cada período
+        fullAmortizationData.push({
+            period: i,
+            payment: payment,
+            principal: principal_payment,
+            interest: interest,
+            balance: balance
+        });
+    }
+    
     // Crear encabezado de tabla con clases para alineación
     let tableHTML = `
         <thead>
@@ -73,9 +97,6 @@ function generateAmortizationTable(principal, rate, term, payment) {
     for (let i = 1; i <= term; i++) {
         const interest = balance * rate;
         const principal_payment = payment - interest;
-        
-        totalInterest += interest;
-        totalPrincipal += principal_payment;
         
         balance -= principal_payment;
         if (balance < 0.01) balance = 0; // Evitar residuos por redondeo
@@ -117,38 +138,41 @@ function generateAmortizationTable(principal, rate, term, payment) {
     tableHTML += '</tbody>';
     tableElement.innerHTML = tableHTML;
     
-    // Añadir botón para ver detalles completos
-    const amortizationSection = document.querySelector('.amortization-section');
-    if (amortizationSection) {
-        // Verificar si ya existe un botón y eliminarlo
-        const existingButton = document.getElementById('btn-view-full-amortization');
-        if (existingButton) {
-            existingButton.remove();
-        }
-        
-        const detailsButton = document.createElement('button');
-        detailsButton.id = 'btn-view-full-amortization';
-        detailsButton.className = 'btn-details';
-        detailsButton.textContent = `Ver tabla completa (${term} cuotas)`;
-        detailsButton.addEventListener('click', function() {
-            showFullAmortizationTable(fullAmortizationData, payment, totalPrincipal, totalInterest, term);
-        });
-        
-        amortizationSection.appendChild(detailsButton);
-    }
-    
-    // También guardamos los datos en una variable global para acceder después
-    window.fullAmortizationData = {
+    // Guardar los datos en una variable global para acceder desde el botón
+    window.amortizationTableData = {
         data: fullAmortizationData,
         payment: payment,
         totalPrincipal: totalPrincipal,
         totalInterest: totalInterest,
         term: term
     };
+    
+    // Configurar el botón para ver la tabla completa
+    const viewButton = document.getElementById('btn-view-full-amortization');
+    if (viewButton) {
+        // Limpiar cualquier evento anterior
+        const newButton = viewButton.cloneNode(true);
+        if (viewButton.parentNode) {
+            viewButton.parentNode.replaceChild(newButton, viewButton);
+        }
+        
+        // Añadir nuevo evento
+        newButton.addEventListener('click', function() {
+            showFullAmortizationTable(
+                window.amortizationTableData.data,
+                window.amortizationTableData.payment,
+                window.amortizationTableData.totalPrincipal,
+                window.amortizationTableData.totalInterest,
+                window.amortizationTableData.term
+            );
+        });
+    }
 }
 
 // Mostrar tabla completa de amortización
 function showFullAmortizationTable(data, payment, totalPrincipal, totalInterest, term) {
+    console.log("Showing full amortization table...");
+    
     // Verificar si ya existe un contenedor y eliminarlo
     let container = document.getElementById('full-amortization-container');
     if (container) {
@@ -160,7 +184,7 @@ function showFullAmortizationTable(data, payment, totalPrincipal, totalInterest,
     container.id = 'full-amortization-container';
     container.className = 'full-amortization-container';
     
-    // Crear el contenido de la ventana modal con clases para alineación
+    // Crear el contenido de la ventana modal
     container.innerHTML = `
         <div class="full-amortization-content">
             <div class="full-amortization-header">
@@ -171,29 +195,29 @@ function showFullAmortizationTable(data, payment, totalPrincipal, totalInterest,
                 <table class="amortization-table">
                     <thead>
                         <tr>
-                            <th class="column-period">Cuota</th>
-                            <th class="column-payment">Pago</th>
-                            <th class="column-principal">Capital</th>
-                            <th class="column-interest">Interés</th>
-                            <th class="column-balance">Saldo</th>
+                            <th>Cuota</th>
+                            <th>Pago</th>
+                            <th>Capital</th>
+                            <th>Interés</th>
+                            <th>Saldo</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${data.map(item => `
                             <tr>
-                                <td class="column-period">${item.period}</td>
-                                <td class="column-payment">${formatCurrency(item.payment)}</td>
-                                <td class="column-principal">${formatCurrency(item.principal)}</td>
-                                <td class="column-interest">${formatCurrency(item.interest)}</td>
-                                <td class="column-balance">${formatCurrency(item.balance)}</td>
+                                <td>${item.period}</td>
+                                <td>${formatCurrency(item.payment)}</td>
+                                <td>${formatCurrency(item.principal)}</td>
+                                <td>${formatCurrency(item.interest)}</td>
+                                <td>${formatCurrency(item.balance)}</td>
                             </tr>
                         `).join('')}
                         <tr class="total-row">
-                            <td class="column-period">Total</td>
-                            <td class="column-payment">${formatCurrency(payment * term)}</td>
-                            <td class="column-principal">${formatCurrency(totalPrincipal)}</td>
-                            <td class="column-interest">${formatCurrency(totalInterest)}</td>
-                            <td class="column-balance">-</td>
+                            <td>Total</td>
+                            <td>${formatCurrency(payment * term)}</td>
+                            <td>${formatCurrency(totalPrincipal)}</td>
+                            <td>${formatCurrency(totalInterest)}</td>
+                            <td>-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -313,4 +337,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar tabla al cargar la página
     const loanAmountInput = document.getElementById('loan-amount');
-    const loanTermInput = documen
+    const loanTermInput = document.getElementById('loan-term');
+    
+    if (interestRateInput && loanAmountInput && loanTermInput) {
+        calculateDetailedLoan();
+    }
+    
+    // También inicializar el botón de ver tabla completa
+    const viewButton = document.getElementById('btn-view-full-amortization');
+    if (viewButton && window.amortizationTableData) {
+        viewButton.addEventListener('click', function() {
+            showFullAmortizationTable(
+                window.amortizationTableData.data,
+                window.amortizationTableData.payment,
+                window.amortizationTableData.totalPrincipal,
+                window.amortizationTableData.totalInterest,
+                window.amortizationTableData.term
+            );
+        });
+    }
+});

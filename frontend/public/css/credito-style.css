@@ -400,7 +400,7 @@
   box-shadow: 0 4px 10px rgba(110, 142, 251, 0.4);
 }
 
-/* Estilos para la tabla de amortización completa */
+/* Estilos para la ventana modal de tabla completa */
 .full-amortization-container {
   position: fixed;
   top: 0;
@@ -469,71 +469,6 @@
   max-height: calc(90vh - 60px);
 }
 
-.summary-row {
-  background-color: #f2f8ff;
-  font-weight: 600;
-}
-
-/* Estilos para calculadora de capacidad de endeudamiento */
-.debt-capacity-result {
-  text-align: center;
-  padding: 20px;
-  margin-top: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.capacity-amount {
-  font-size: 28px;
-  font-weight: 700;
-  color: #6e8efb;
-  margin: 10px 0;
-}
-
-.capacity-description {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 15px;
-}
-
-.capacity-meter {
-  height: 10px;
-  background-color: #eee;
-  border-radius: 5px;
-  margin: 15px 0;
-  overflow: hidden;
-}
-
-.capacity-fill {
-  height: 100%;
-  background: linear-gradient(to right, #4caf50, #ffeb3b, #f44336);
-  width: 70%;
-}
-
-/* Añadir pista visual para los campos */
-.tool-form .form-group {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.tool-form .form-group::after {
-  content: attr(data-unit);
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  color: #888;
-  pointer-events: none;
-}
-
-/* Añadir efecto de enfoque visual */
-.tool-form .form-group:focus-within label {
-  color: #6e8efb;
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
-
 /* Estilos para la tabla detallada de amortización */
 .detailed-table {
   width: 100%;
@@ -595,13 +530,14 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  table-layout: fixed; /* Hace que las columnas tengan ancho fijo */
 }
 
 .amortization-table thead th {
   background-color: #f2f5fc;
   color: #333;
   font-weight: 600;
-  text-align: center;
+  text-align: center; /* Centrar encabezados */
   padding: 12px 8px;
   border-bottom: 2px solid #e0e6f5;
   position: sticky;
@@ -610,13 +546,21 @@
 
 .amortization-table tbody td {
   padding: 10px 8px;
-  text-align: right;
+  text-align: center; /* Centrar todos los valores */
   border-bottom: 1px solid #eee;
   color: #444;
 }
 
+/* Columnas específicas que deben estar alineadas a la derecha (valores monetarios) */
+.amortization-table tbody td:nth-child(2),
+.amortization-table tbody td:nth-child(3),
+.amortization-table tbody td:nth-child(4),
+.amortization-table tbody td:nth-child(5) {
+  text-align: right; /* Alinear a la derecha los valores monetarios */
+}
+
 .amortization-table tbody td:first-child {
-  text-align: center;
+  text-align: center; /* Asegurar que la columna de número de cuota esté centrada */
   font-weight: 500;
 }
 
@@ -631,8 +575,15 @@
   padding: 12px 8px;
 }
 
-.amortization-table tr:hover {
-  background-color: rgba(110, 142, 251, 0.05);
+/* Agregar líneas verticales sutiles entre columnas */
+.amortization-table th, 
+.amortization-table td {
+  border-right: 1px solid #f0f0f0;
+}
+
+.amortization-table th:last-child,
+.amortization-table td:last-child {
+  border-right: none;
 }
 
 /* Añadir estilos para el mensaje de equivalencia de tasas */
@@ -819,6 +770,11 @@
   
   .amortization-table tr:hover {
     background-color: rgba(110, 142, 251, 0.1);
+  }
+  
+  .amortization-table th, 
+  .amortization-table td {
+    border-right-color: #333;
   }
   
   /* Modo oscuro para la tabla completa */
